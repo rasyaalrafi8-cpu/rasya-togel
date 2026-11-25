@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#05030c">
+<title>RASYA TOGEL — Simulasi Angka Premium</title>
+
+<!-- GSAP + ScrollTrigger + Lenis (defer biar non-blocking) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.0.42/dist/lenis.min.js" defer></script>
+
+<style>
+/* ============================================================
+   RASYA TOGEL — Design System
+   ============================================================ */
+:root{
+  --bg:#05030c;
+  --card-a:rgba(31,20,60,.82);
+  --card-b:rgba(11,7,24,.92);
+  --border:rgba(168,85,247,.24);
+  --border-strong:rgba(168,85,247,.55);
+  --purple:#a855f7;
+  --purple-d:#7c3aed;
+  --neon:#c084fc;
+  --gold:#ffd166;
+  --gold-d:#f5a623;
+  --blue:#38bdf8;
+  --text:#ece9f7;
+  --muted:#9b93b8;
+  --win:#2ee6a8;
+  --lose:#ff5c7a;
+  --r-lg:22px;
+  --r-md:14px;
+  --r-sm:10px;
+  --shadow:0 18px 46px -22px rgba(124,58,237,.85);
+  --font:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+body::before{
+  content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(124,58,237,.38), transparent 42%),
+    radial-gradient(circle at 88% 2%, rgba(56,189,248,.16), transparent 38%),
+    radial-gradient(circle at 50% 105%, rgba(168,85,247,.24), transparent 55%),
+    radial-gradient(circle at 78% 62%, rgba(255,209,102,.07), transparent 40%);
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(168,85,247,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168,85,247,.055) 1px, transparent 1px);
+  background-size:52px 52px;
+  -webkit-mask-image:radial-gradient(circle at 50% 35%, #000 10%, transparent 72%);
+  mask-image:radial-gradient(circle at 50% 35%, #000 10%, transparent 72%);
+  animation:gridDrift 30s linear infinite;
+}
+@keyframes gridDrift{to{background-position:52px 52px, 52px 52px}}
+
+.hidden{display:none !important}
+.hint{color:var(--muted);font-size:12.5px;line-height:1.55}
+.label{
+  display:block;font-size:11.5px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 9px 2px;
+}
+
+/* ---------- Word reveal (GSAP) ---------- */
+.split-wrap{display:inline}
+.word{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .04em}
+.word-inner{display:inline-block;will-change:transform;transform-origin:50% 100%}
+
+/* ============================================================
+   AUTH SCREEN
+   ============================================================ */
+#authScreen{min-height:100vh;display:grid;place-items:center;padding:24px 16px}
+.auth-card{
+  width:100%;max-width:430px;position:relative;
+  background:linear-gradient(165deg, var(--card-a), var(--card-b));
+  border:1px solid var(--border);
+  border-radius:26px;padding:34px 28px 30px;
+  box-shadow:var(--shadow), 0 0 0 1px rgba(255,255,255,.03) inset;
+  backdrop-filter:blur(16px);
+}
+.auth-card::before{
+  content:'';position:absolute;inset:-1px;border-radius:26px;pointer-events:none;
+  background:linear-gradient(140deg, rgba(168,85,247,.5), transparent 38%, transparent 62%, rgba(255,209,102,.32));
+  -webkit-mask:linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  padding:1px;opacity:.85;
+}
+.brand{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:6px}
+.brand-logo{
+  width:46px;height:46px;border-radius:14px;flex:0 0 auto;
+  display:grid;place-items:center;font-weight:900;font-size:20px;color:#0b0518;
+  background:linear-gradient(140deg,var(--gold),var(--gold-d) 55%,#b478ff);
+  box-shadow:0 0 26px -4px rgba(255,209,102,.85);
+  animation:logoPulse 3.4s ease-in-out infinite;
+}
+@keyframes logoPulse{
+  0%,100%{box-shadow:0 0 22px -6px rgba(255,209,102,.7)}
+  50%{box-shadow:0 0 34px -2px rgba(192,132,252,.95)}
+}
+.brand-text{font-size:23px;font-weight:900;letter-spacing:.06em}
+.brand-text span{
+  background:linear-gradient(92deg,var(--gold),#fff3c9 45%,var(--neon));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.auth-sub{
+  text-align:center;color:var(--muted);font-size:12.5px;
+  letter-spacing:.16em;text-transform:uppercase;margin-bottom:26px;
+}
+
+.tabs{display:flex;gap:6px;background:rgba(255,255,255,.045);padding:5px;border-radius:14px;margin-bottom:22px}
+.tabs button{
+  flex:1;padding:11px;border:0;border-radius:10px;cursor:pointer;
+  background:transparent;color:var(--muted);font-weight:700;font-size:13.5px;
+  font-family:var(--font);transition:.28s;
+}
+.tabs button.active{
+  background:linear-gradient(140deg,var(--purple-d),var(--purple));
+  color:#fff;box-shadow:0 0 20px -6px var(--purple);
+}
+
+.field{margin-bottom:15px}
+.input{
+  width:100%;padding:13px 15px;border-radius:var(--r-md);
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(168,85,247,.22);
+  color:var(--text);font-size:15px;font-family:var(--font);
+  transition:.25s;outline:none;
+}
+.input::placeholder{color:#6c6488}
+.input:focus{
+  border-color:var(--purple);
+  background:rgba(168,85,247,.1);
+  box-shadow:0 0 0 4px rgba(168,85,247,.14), 0 0 22px -8px var(--purple);
+}
+
+.btn-primary{
+  width:100%;padding:14px;border:0;border-radius:var(--r-md);cursor:pointer;
+  font-family:var(--font);font-weight:800;font-size:14.5px;letter-spacing:.1em;
+  color:#0a0418;
+  background:linear-gradient(135deg,var(--gold) 0%,#ffe9a8 40%,var(--gold-d) 100%);
+  box-shadow:0 0 26px -6px rgba(255,209,102,.9), 0 10px 30px -14px rgba(255,209,102,.8);
+  transition:.25s;position:relative;overflow:hidden;
+}
+.btn-primary:hover{box-shadow:0 0 34px -4px rgba(255,209,102,1),0 14px 34px -14px rgba(255,209,102,.9)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.btn-primary::after{
+  content:'';position:absolute;top:0;left:-140%;width:60%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.65),transparent);
+  transform:skewX(-20deg);
+}
+.btn-primary:not(:disabled):hover::after{animation:sheen .85s ease}
+@keyframes sheen{to{left:150%}}
+
+.btn-ghost{
+  padding:11px 16px;border-radius:var(--r-md);cursor:pointer;
+  font-family:var(--font);font-weight:700;font-size:13px;
+  background:rgba(168,85,247,.12);color:var(--neon);
+  border:1px solid rgba(168,85,247,.35);
+  transition:.25s;
+}
+.btn-ghost:hover{background:rgba(168,85,247,.24);box-shadow:0 0 20px -6px var(--purple)}
+.btn-danger{
+  padding:11px 16px;border-radius:var(--r-md);cursor:pointer;
+  font-family:var(--font);font-weight:700;font-size:13px;
+  background:rgba(255,92,122,.12);color:var(--lose);
+  border:1px solid rgba(255,92,122,.4);
+  transition:.25s;
+}
+.btn-danger:hover{background:rgba(255,92,122,.24);box-shadow:0 0 20px -6px var(--lose)}
+
+.auth-note{
+  margin-top:20px;padding:12px 14px;border-radius:var(--r-md);
+  background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2);
+  font-size:11.8px;color:#a9c7e8;line-height:1.6;
+}
+.auth-note b{color:var(--blue)}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.layout{display:flex;min-height:100vh}
+
+.sidebar{
+  width:252px;flex:0 0 252px;position:fixed;top:0;left:0;bottom:0;z-index:40;
+  padding:26px 18px;display:flex;flex-direction:column;gap:8px;
+  background:linear-gradient(180deg, rgba(24,14,48,.92), rgba(7,4,16,.96));
+  border-right:1px solid rgba(168,85,247,.18);
+  backdrop-filter:blur(18px);
+}
+.sidebar .brand{justify-content:flex-start;margin-bottom:26px}
+.sidebar .brand-text{font-size:18px}
+.nav{display:flex;flex-direction:column;gap:6px;flex:1}
+.nav-item{
+  display:flex;align-items:center;gap:12px;width:100%;
+  padding:12px 14px;border:1px solid transparent;border-radius:var(--r-md);
+  background:transparent;color:var(--muted);cursor:pointer;
+  font-family:var(--font);font-size:14px;font-weight:600;text-align:left;
+  transition:.25s;
+}
+.nav-item svg{width:19px;height:19px;flex:0 0 auto;fill:currentColor;opacity:.85}
+.nav-item:hover{background:rgba(168,85,247,.1);color:var(--text)}
+.nav-item.active{
+  background:linear-gradient(120deg, rgba(124,58,237,.34), rgba(168,85,247,.12));
+  border-color:rgba(168,85,247,.45);color:#fff;
+  box-shadow:0 0 26px -10px var(--purple), inset 0 0 20px -14px var(--neon);
+}
+.nav-item.active svg{fill:var(--gold);opacity:1}
+
+.user-chip{
+  margin-top:14px;padding:12px;border-radius:var(--r-md);
+  background:rgba(255,255,255,.04);border:1px solid rgba(168,85,247,.2);
+  display:flex;align-items:center;gap:11px;
+}
+.avatar{
+  width:38px;height:38px;border-radius:12px;flex:0 0 auto;display:grid;place-items:center;
+  font-weight:900;font-size:15px;color:#0a0418;
+  background:linear-gradient(140deg,var(--neon),var(--purple));
+  box-shadow:0 0 18px -5px var(--purple);
+}
+.user-chip .u-name{font-size:13.5px;font-weight:700;line-height:1.2;word-break:break-all}
+.user-chip .u-role{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+
+.content{flex:1;margin-left:252px;padding:28px 30px 40px;max-width:1440px;width:100%}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.page-title{font-size:22px;font-weight:800;letter-spacing:.01em}
+.page-title small{display:block;font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
+
+.balance-pill{
+  display:flex;align-items:center;gap:12px;padding:10px 18px;border-radius:999px;
+  background:linear-gradient(120deg, rgba(255,209,102,.14), rgba(168,85,247,.14));
+  border:1px solid rgba(255,209,102,.35);
+  box-shadow:0 0 26px -12px var(--gold);
+}
+.balance-pill .bl-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.balance-pill .bl-value{
+  font-size:18px;font-weight:900;font-variant-numeric:tabular-nums;
+  background:linear-gradient(92deg,var(--gold),#fff2c4);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+.card{
+  position:relative;
+  background:linear-gradient(165deg,var(--card-a),var(--card-b));
+  border:1px solid var(--border);border-radius:var(--r-lg);padding:22px;
+  box-shadow:var(--shadow), 0 0 0 1px rgba(255,255,255,.025) inset;
+  backdrop-filter:blur(14px);overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:12%;right:12%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(192,132,252,.9),transparent);
+  opacity:.75;
+}
+.card-title{
+  font-size:14px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--neon);margin-bottom:18px;display:flex;align-items:center;gap:9px;
+}
+.card-title::before{
+  content:'';width:4px;height:16px;border-radius:3px;
+  background:linear-gradient(var(--gold),var(--purple));
+  box-shadow:0 0 12px var(--gold);
+}
+
+.hero{
+  display:flex;align-items:center;justify-content:space-between;gap:22px;
+  margin-bottom:20px;flex-wrap:wrap;
+  background:linear-gradient(120deg, rgba(124,58,237,.26), rgba(20,12,42,.92) 55%, rgba(255,209,102,.1));
+}
+.hero .eyebrow{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.hero .balance{
+  font-size:clamp(30px,5vw,44px);font-weight:900;line-height:1.1;margin:6px 0 6px;
+  font-variant-numeric:tabular-nums;
+  background:linear-gradient(96deg,var(--gold) 0%,#fff6d6 45%,var(--neon) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 22px rgba(255,209,102,.35));
+}
+.chip-live{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:9px 16px;border-radius:999px;font-size:12px;font-weight:700;
+  background:rgba(46,230,168,.1);border:1px solid rgba(46,230,168,.35);color:var(--win);
+}
+.chip-live .dot{
+  width:8px;height:8px;border-radius:50%;background:var(--win);
+  box-shadow:0 0 12px var(--win);animation:blink 1.6s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+
+.type-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.type-btn{
+  padding:15px 8px;border-radius:var(--r-md);cursor:pointer;
+  font-family:var(--font);font-weight:900;font-size:17px;letter-spacing:.05em;
+  background:rgba(255,255,255,.04);color:var(--muted);
+  border:1px solid rgba(168,85,247,.2);transition:.28s;position:relative;overflow:hidden;
+}
+.type-btn small{display:block;font-size:9.5px;font-weight:600;letter-spacing:.12em;opacity:.75;margin-top:3px}
+.type-btn:hover{color:var(--text);border-color:rgba(168,85,247,.45)}
+.type-btn.active{
+  color:#0a0418;
+  background:linear-gradient(140deg,var(--neon),var(--purple) 55%,var(--purple-d));
+  border-color:transparent;
+  box-shadow:0 0 30px -8px var(--purple), inset 0 0 22px -12px #fff;
+  transform:translateY(-2px);
+}
+
+.number-input{
+  font-size:26px;font-weight:900;letter-spacing:.42em;text-align:center;
+  font-variant-numeric:tabular-nums;padding:14px 10px 14px 20px;
+  color:var(--gold);
+}
+.number-input::placeholder{letter-spacing:.42em;color:#4b4468}
+
+.bet-presets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.bet-presets button{
+  padding:10px 4px;border-radius:var(--r-sm);cursor:pointer;
+  font-family:var(--font);font-weight:700;font-size:12.5px;
+  background:rgba(56,189,248,.08);color:#9fd8f5;
+  border:1px solid rgba(56,189,248,.25);transition:.22s;
+}
+.bet-presets button:hover{background:rgba(56,189,248,.2);box-shadow:0 0 18px -8px var(--blue)}
+.bet-presets button.active{
+  background:linear-gradient(140deg,rgba(56,189,248,.4),rgba(168,85,247,.3));
+  color:#fff;border-color:var(--blue);box-shadow:0 0 22px -8px var(--blue);
+}
+
+.mult-info{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.mult-info span{
+  font-size:11px;font-weight:700;padding:6px 11px;border-radius:8px;
+  background:rgba(255,209,102,.09);border:1px solid rgba(255,209,102,.25);
+  color:var(--gold);letter-spacing:.06em;
+}
+
+.draw-stage{
+  min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;padding:22px 12px;border-radius:var(--r-lg);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(124,58,237,.24), transparent 68%),
+    rgba(0,0,0,.28);
+  border:1px dashed rgba(168,85,247,.28);
+  position:relative;overflow:hidden;
+}
+.draw-stage::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 50% 50%, rgba(192,132,252,.14), transparent 62%);
+  opacity:0;transition:.5s;
+}
+.draw-stage.active::after{opacity:1;animation:stagePulse 1.6s ease-in-out infinite}
+@keyframes stagePulse{0%,100%{opacity:.35}50%{opacity:.9}}
+
+.digits{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;z-index:1}
+.digit{
+  width:66px;height:86px;border-radius:16px;
+  display:grid;place-items:center;
+  font-size:42px;font-weight:900;font-variant-numeric:tabular-nums;color:#fff;
+  background:linear-gradient(165deg,#1d1338,#0b0618);
+  border:1px solid rgba(168,85,247,.38);
+  box-shadow:0 0 26px -8px rgba(168,85,247,.9), inset 0 0 22px rgba(168,85,247,.12);
+  transition:.3s;
+}
+.digit.rolling{
+  color:var(--neon);border-color:var(--purple);
+  animation:digitShake .18s linear infinite;
+}
+@keyframes digitShake{
+  0%{transform:translateY(-3px)}50%{transform:translateY(3px)}100%{transform:translateY(-3px)}
+}
+.digit.settle{animation:digitPop .5s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes digitPop{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.digit.win{
+  color:#1a1104;
+  background:linear-gradient(165deg,var(--gold),#fff2c0 55%,var(--gold-d));
+  border-color:rgba(255,209,102,.9);
+  box-shadow:0 0 42px -6px rgba(255,209,102,1), inset 0 0 24px rgba(255,255,255,.5);
+}
+.digit.lose{
+  color:#fff;
+  background:linear-gradient(165deg,#3a1024,#1a0510);
+  border-color:rgba(255,92,122,.7);
+  box-shadow:0 0 34px -8px rgba(255,92,122,.95), inset 0 0 22px rgba(255,92,122,.15);
+}
+.digit.empty{
+  color:#3b3455;border-style:dashed;border-color:rgba(168,85,247,.22);
+  box-shadow:none;background:rgba(255,255,255,.02);
+}
+
+.draw-status{
+  font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;text-align:center;z-index:1;
+}
+
+.result-banner{
+  width:100%;padding:0;border-radius:var(--r-md);overflow:hidden;
+  max-height:0;opacity:0;transition:.45s;z-index:1;
+}
+.result-banner.show{max-height:180px;opacity:1;padding:16px;margin-top:4px}
+.result-banner.win{
+  background:linear-gradient(120deg,rgba(46,230,168,.16),rgba(255,209,102,.14));
+  border:1px solid rgba(46,230,168,.45);
+  box-shadow:0 0 34px -14px var(--win);
+}
+.result-banner.lose{
+  background:linear-gradient(120deg,rgba(255,92,122,.14),rgba(124,58,237,.1));
+  border:1px solid rgba(255,92,122,.42);
+  box-shadow:0 0 34px -16px var(--lose);
+}
+.rb-title{
+  font-size:22px;font-weight:900;letter-spacing:.16em;text-align:center;margin-bottom:6px;
+}
+.result-banner.win .rb-title{color:var(--win);text-shadow:0 0 26px rgba(46,230,168,.7)}
+.result-banner.lose .rb-title{color:var(--lose);text-shadow:0 0 26px rgba(255,92,122,.6)}
+.rb-detail{text-align:center;font-size:13px;color:var(--muted)}
+.rb-detail b{color:var(--gold);font-weight:800}
+
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r-md)}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:620px}
+thead th{
+  text-align:left;padding:11px 14px;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);font-weight:800;
+  border-bottom:1px solid rgba(168,85,247,.22);
+  background:rgba(255,255,255,.025);white-space:nowrap;
+}
+tbody td{padding:12px 14px;border-bottom:1px solid rgba(168,85,247,.08);white-space:nowrap;color:#d7d2ea}
+tbody tr{transition:.2s}
+tbody tr:hover{background:rgba(168,85,247,.07)}
+tbody tr:last-child td{border-bottom:0}
+.mono{font-variant-numeric:tabular-nums;font-weight:700}
+.badge{display:inline-block;padding:4px 11px;border-radius:999px;font-size:10.5px;font-weight:900;letter-spacing:.1em}
+.badge.win{background:rgba(46,230,168,.14);color:var(--win);border:1px solid rgba(46,230,168,.42)}
+.badge.lose{background:rgba(255,92,122,.13);color:var(--lose);border:1px solid rgba(255,92,122,.4)}
+.badge.type{background:rgba(168,85,247,.16);color:var(--neon);border:1px solid rgba(168,85,247,.4)}
+.badge.admin{background:rgba(255,209,102,.14);color:var(--gold);border:1px solid rgba(255,209,102,.42)}
+.empty-state{padding:38px 16px;text-align:center;color:var(--muted);font-size:13px}
+
+.stat-card{
+  padding:18px;border-radius:var(--r-md);
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(168,85,247,.18);
+  position:relative;overflow:hidden;transition:border-color .3s, box-shadow .3s;
+}
+.stat-card:hover{border-color:rgba(168,85,247,.4);box-shadow:0 0 30px -16px var(--purple)}
+.stat-card .s-label{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.stat-card .s-value{font-size:26px;font-weight:900;margin-top:6px;font-variant-numeric:tabular-nums;color:#fff}
+.stat-card.gold .s-value{color:var(--gold);text-shadow:0 0 24px rgba(255,209,102,.45)}
+.stat-card.win .s-value{color:var(--win);text-shadow:0 0 24px rgba(46,230,168,.45)}
+.stat-card.lose .s-value{color:var(--lose);text-shadow:0 0 24px rgba(255,92,122,.45)}
+.stat-card.blue .s-value{color:var(--blue);text-shadow:0 0 24px rgba(56,189,248,.45)}
+
+.progress{
+  height:14px;border-radius:999px;background:rgba(255,255,255,.06);
+  overflow:hidden;margin-top:14px;border:1px solid rgba(168,85,247,.2);
+}
+.progress .bar{
+  height:100%;border-radius:999px;transition:width .9s cubic-bezier(.2,.9,.25,1);
+  background:linear-gradient(90deg,var(--win),var(--gold));
+  box-shadow:0 0 22px -4px var(--win);
+}
+
+.config-row{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.big-pct{
+  font-size:42px;font-weight:900;line-height:1;
+  background:linear-gradient(96deg,var(--gold),var(--neon));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 18px rgba(255,209,102,.4));
+}
+.big-pct span{font-size:42px}
+.range-wrap{flex:1;min-width:220px}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:999px;
+  background:linear-gradient(90deg,var(--purple-d),var(--purple),var(--gold));
+  outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:24px;height:24px;border-radius:50%;
+  background:linear-gradient(140deg,#fff,var(--gold));
+  border:2px solid #fff;cursor:pointer;
+  box-shadow:0 0 20px var(--gold);transition:.2s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+input[type=range]::-moz-range-thumb{
+  width:22px;height:22px;border-radius:50%;border:2px solid #fff;
+  background:linear-gradient(140deg,#fff,var(--gold));
+  box-shadow:0 0 20px var(--gold);cursor:pointer;
+}
+.range-labels{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:8px;letter-spacing:.1em}
+
+.balance-edit{display:flex;gap:6px;align-items:center}
+.balance-edit input{
+  width:112px;padding:7px 9px;font-size:12.5px;border-radius:8px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(168,85,247,.25);
+  color:var(--text);font-family:var(--font);outline:none;
+}
+.balance-edit input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(168,85,247,.15)}
+.mini-btn{
+  padding:7px 11px;border-radius:8px;cursor:pointer;font-size:11.5px;font-weight:800;
+  font-family:var(--font);border:1px solid rgba(46,230,168,.4);
+  background:rgba(46,230,168,.12);color:var(--win);transition:.22s;
+}
+.mini-btn:hover{background:rgba(46,230,168,.26);box-shadow:0 0 16px -6px var(--win)}
+
+.danger-zone{
+  border-color:rgba(255,92,122,.35);
+  background:linear-gradient(165deg,rgba(58,16,36,.6),rgba(11,7,24,.92));
+}
+.danger-zone::before{background:linear-gradient(90deg,transparent,rgba(255,92,122,.9),transparent)}
+.danger-zone .card-title{color:var(--lose)}
+.danger-zone .card-title::before{background:linear-gradient(var(--lose),var(--purple))}
+.danger-actions{display:flex;gap:12px;flex-wrap:wrap}
+
+#toastWrap{
+  position:fixed;bottom:26px;left:50%;transform:translateX(-50%);
+  z-index:999;display:flex;flex-direction:column;gap:10px;align-items:center;
+  pointer-events:none;width:calc(100% - 32px);max-width:420px;
+}
+.toast{
+  padding:13px 20px;border-radius:var(--r-md);font-size:13.5px;font-weight:600;
+  background:linear-gradient(140deg,rgba(31,20,60,.97),rgba(11,7,24,.97));
+  border:1px solid var(--border-strong);color:var(--text);
+  box-shadow:0 0 40px -12px var(--purple);
+  animation:toastIn .38s cubic-bezier(.2,1.3,.4,1) both;
+  text-align:center;width:100%;backdrop-filter:blur(14px);
+}
+.toast.success{border-color:rgba(46,230,168,.6);color:#c6ffe9;box-shadow:0 0 40px -12px var(--win)}
+.toast.error{border-color:rgba(255,92,122,.6);color:#ffd3dc;box-shadow:0 0 40px -12px var(--lose)}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(22px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(-14px) scale(.96)}}
+
+.mobile-top{display:none}
+.mobile-nav{display:none}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1100px){
+  .grid-4{grid-template-columns:repeat(2,1fr)}
+  .grid-3{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:900px){
+  .sidebar{display:none}
+  .content{margin-left:0;padding:0 14px 108px}
+  .mobile-top{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:16px 14px 14px;position:sticky;top:0;z-index:35;
+    background:linear-gradient(180deg,rgba(9,5,20,.96),rgba(9,5,20,.72) 70%,transparent);
+    backdrop-filter:blur(14px);margin:0 -14px 14px;
+  }
+  .mobile-top .brand-text{font-size:16px}
+  .mobile-top .brand-logo{width:38px;height:38px;border-radius:11px;font-size:16px}
+  .mobile-balance{
+    display:flex;flex-direction:column;align-items:flex-end;
+    padding:7px 14px;border-radius:12px;
+    background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.3);
+  }
+  .mobile-balance .bl-label{font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .mobile-balance .bl-value{font-size:14px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--gold)}
+
+  .mobile-nav{
+    display:flex;position:fixed;bottom:0;left:0;right:0;z-index:60;
+    padding:9px 10px calc(9px + env(safe-area-inset-bottom));
+    background:linear-gradient(0deg,rgba(7,4,16,.99),rgba(20,12,42,.96));
+    border-top:1px solid rgba(168,85,247,.28);
+    backdrop-filter:blur(20px);
+    box-shadow:0 -12px 40px -20px rgba(168,85,247,.9);
+  }
+  .mobile-nav button{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+    padding:7px 2px;border:0;border-radius:12px;background:transparent;
+    color:var(--muted);cursor:pointer;font-family:var(--font);
+    font-size:9.5px;font-weight:700;letter-spacing:.06em;transition:.25s;
+  }
+  .mobile-nav button svg{width:21px;height:21px;fill:currentColor}
+  .mobile-nav button.active{color:var(--gold)}
+  .mobile-nav button.active svg{filter:drop-shadow(0 0 10px var(--gold))}
+
+  .topbar{display:none}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .hero{padding:20px}
+  .card{padding:18px;border-radius:18px}
+  .digit{width:56px;height:74px;font-size:34px;border-radius:13px}
+  .bet-presets{grid-template-columns:repeat(4,1fr)}
+  .config-row{gap:16px}
+  .big-pct{font-size:34px}
+  .big-pct span{font-size:34px}
+  #toastWrap{bottom:96px}
+}
+@media (max-width:380px){
+  .digit{width:48px;height:64px;font-size:28px}
+  .bet-presets{grid-template-columns:repeat(2,1fr)}
+  .type-btn{font-size:15px;padding:12px 6px}
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="brand">
+      <div class="brand-logo">R</div>
+      <div class="brand-text">RASYA <span>TOGEL</span></div>
+    </div>
+    <p class="auth-sub">Simulasi Angka Virtual</p>
+
+    <div class="tabs">
+      <button id="tabLogin" class="active" type="button">Masuk</button>
+      <button id="tabRegister" type="button">Daftar</button>
+    </div>
+
+    <form id="loginForm" autocomplete="off">
+      <div class="field">
+        <label class="label" for="loginUser">Username</label>
+        <input class="input" id="loginUser" type="text" placeholder="Masukkan username" required>
+      </div>
+      <div class="field">
+        <label class="label" for="loginPass">Password</label>
+        <input class="input" id="loginPass" type="password" placeholder="Masukkan password" required>
+      </div>
+      <button class="btn-primary" type="submit">MASUK KE DASHBOARD</button>
+    </form>
+
+    <form id="registerForm" class="hidden" autocomplete="off">
+      <div class="field">
+        <label class="label" for="regUser">Username Baru</label>
+        <input class="input" id="regUser" type="text" placeholder="Minimal 3 karakter" required>
+      </div>
+      <div class="field">
+        <label class="label" for="regPass">Password</label>
+        <input class="input" id="regPass" type="password" placeholder="Minimal 4 karakter" required>
+      </div>
+      <div class="field">
+        <label class="label" for="regPass2">Konfirmasi Password</label>
+        <input class="input" id="regPass2" type="password" placeholder="Ulangi password" required>
+      </div>
+      <button class="btn-primary" type="submit">BUAT AKUN DEMO</button>
+    </form>
+
+    <div class="auth-note">
+      <b>Akun Demo:</b><br>
+      Player → <b>budi</b> / demo123 &nbsp;·&nbsp; <b>sinta</b> / demo123<br>
+      Admin → <b>admin</b> / admin123<br>
+      Semua saldo bersifat virtual. Tidak ada uang asli.
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="layout hidden">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">R</div>
+      <div class="brand-text">RASYA <span>TOGEL</span></div>
+    </div>
+
+    <nav class="nav" id="sideNav">
+      <button class="nav-item active" data-view="play" type="button">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span>Simulasi</span>
+      </button>
+      <button class="nav-item" data-view="history" type="button">
+        <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 1 0 9 9h-2a7 7 0 1 1-7-7V3zm-1 4v6l5 3 .9-1.6-4-2.4V7h-1.9z"/></svg><span>Riwayat</span>
+      </button>
+      <button class="nav-item" data-view="stats" type="button">
+        <svg viewBox="0 0 24 24"><path d="M4 20h3V10H4v10zm6.5 0h3V4h-3v16zM17 20h3v-7h-3v7z"/></svg><span>Statistik</span>
+      </button>
+      <button class="nav-item admin-only hidden" data-view="admin" type="button">
+        <svg viewBox="0 0 24 24"><path d="M12 2 4 5.5v6c0 5 3.4 9.3 8 10.5 4.6-1.2 8-5.5 8-10.5v-6L12 2zm0 6a2.2 2.2 0 1 1 0 4.4A2.2 2.2 0 0 1 12 8zm4 9.2c-.9 1.2-2.4 2-4 2s-3.1-.8-4-2c.1-1.4 2.7-2.2 4-2.2s3.9.8 4 2.2z"/></svg><span>Admin</span>
+      </button>
+    </nav>
+
+    <div class="user-chip">
+      <div class="avatar" id="sideAvatar">?</div>
+      <div style="min-width:0">
+        <div class="u-name" id="sideName">—</div>
+        <div class="u-role" id="sideRole">player</div>
+      </div>
+    </div>
+    <button class="nav-item" id="logoutSide" type="button" style="margin-top:8px">
+      <svg viewBox="0 0 24 24"><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5v-2H5V5h5V3zm6.2 3.6-1.4 1.4L17.2 11H9v2h8.2l-2.4 2.4 1.4 1.4L21 12l-4.8-5.4z"/></svg>
+      <span>Keluar</span>
+    </button>
+  </aside>
+
+  <main class="content">
+
+    <div class="mobile-top">
+      <div class="brand">
+        <div class="brand-logo">R</div>
+        <div class="brand-text">RASYA <span>TOGEL</span></div>
+      </div>
+      <div class="mobile-balance">
+        <span class="bl-label">Saldo Virtual</span>
+        <span class="bl-value" data-balance>Rp 0</span>
+      </div>
+    </div>
+
+    <div class="topbar">
+      <div class="page-title" id="pageTitle">Simulasi Angka<small>Dashboard Player</small></div>
+      <div class="balance-pill">
+        <div>
+          <div class="bl-label">Saldo Virtual</div>
+          <div class="bl-value" data-balance>Rp 0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLAY -->
+    <section class="view" id="view-play">
+      <div class="hero card">
+        <div>
+          <p class="eyebrow">Selamat datang kembali</p>
+          <h1 class="balance" data-balance>Rp 0</h1>
+          <p class="hint">Saldo virtual untuk hiburan — bukan uang asli.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+          <div class="chip-live"><span class="dot"></span> Peluang Menang <b id="winRateChip">60%</b></div>
+          <div class="hint" id="heroPlays">0 putaran dimainkan</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h2 class="card-title">Form Simulasi</h2>
+          <div class="type-tabs" id="typeTabs">
+            <button class="type-btn active" data-len="2" type="button">2D<small>2 DIGIT</small></button>
+            <button class="type-btn" data-len="3" type="button">3D<small>3 DIGIT</small></button>
+            <button class="type-btn" data-len="4" type="button">4D<small>4 DIGIT</small></button>
+          </div>
+          <div class="field">
+            <label class="label" for="pickInput">Angka Pilihan</label>
+            <input id="pickInput" class="input number-input" type="text" inputmode="numeric"
+                   maxlength="2" placeholder="00" autocomplete="off">
+          </div>
+          <div class="field">
+            <label class="label" for="betInput">Nominal Taruhan (Virtual)</label>
+            <div class="bet-presets" id="betPresets">
+              <button type="button" data-bet="1000" class="active">1.000</button>
+              <button type="button" data-bet="5000">5.000</button>
+              <button type="button" data-bet="10000">10.000</button>
+              <button type="button" data-bet="50000">50.000</button>
+            </div>
+            <input id="betInput" class="input" type="number" min="100" step="100" value="1000">
+          </div>
+          <button class="btn-primary" id="playBtn" type="button">MULAI SIMULASI</button>
+          <div class="mult-info">
+            <span>2D ×2</span><span>3D ×3</span><span>4D ×5</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Hasil Pengundian</h2>
+          <div class="draw-stage" id="drawStage">
+            <div class="digits" id="digits">
+              <div class="digit empty">–</div>
+              <div class="digit empty">–</div>
+            </div>
+            <div class="draw-status" id="drawStatus">Menunggu taruhan…</div>
+          </div>
+          <div class="result-banner" id="resultBanner">
+            <div class="rb-title" id="rbTitle">—</div>
+            <div class="rb-detail" id="rbDetail">—</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="view hidden" id="view-history">
+      <div class="card">
+        <h2 class="card-title">Riwayat Simulasi Saya</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Waktu</th><th>Jenis</th><th>Angka Pilihan</th>
+                <th>Angka Hasil</th><th>Taruhan</th><th>Status</th><th>Payout</th>
+              </tr>
+            </thead>
+            <tbody id="userHistoryBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state hidden" id="userHistoryEmpty">Belum ada permainan. Mulai simulasi pertamamu!</div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="view hidden" id="view-stats">
+      <div class="grid-4" style="margin-bottom:20px">
+        <div class="stat-card blue"><div class="s-label">Total Putaran</div><div class="s-value" id="stTotal">0</div></div>
+        <div class="stat-card win"><div class="s-label">Menang</div><div class="s-value" id="stWin">0</div></div>
+        <div class="stat-card lose"><div class="s-label">Kalah</div><div class="s-value" id="stLose">0</div></div>
+        <div class="stat-card gold"><div class="s-label">Win Rate</div><div class="s-value" id="stRate">0%</div></div>
+      </div>
+      <div class="card" style="margin-bottom:20px">
+        <h2 class="card-title">Rasio Kemenangan</h2>
+        <div class="progress"><div class="bar" id="stBar" style="width:0%"></div></div>
+        <p class="hint" style="margin-top:12px">Dihitung dari total permainan yang sudah kamu lakukan.</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h2 class="card-title">Keuangan Virtual</h2>
+          <div class="grid-2" style="gap:12px">
+            <div class="stat-card"><div class="s-label">Total Taruhan</div><div class="s-value" style="font-size:20px" id="stBet">Rp 0</div></div>
+            <div class="stat-card"><div class="s-label">Total Payout</div><div class="s-value" style="font-size:20px" id="stPayout">Rp 0</div></div>
+          </div>
+          <div class="stat-card" style="margin-top:12px">
+            <div class="s-label">Net Profit / Loss</div>
+            <div class="s-value" id="stNet">Rp 0</div>
+          </div>
+        </div>
+        <div class="card">
+          <h2 class="card-title">Statistik Per Jenis</h2>
+          <div class="table-wrap">
+            <table style="min-width:auto">
+              <thead><tr><th>Jenis</th><th>Main</th><th>Menang</th><th>Rate</th></tr></thead>
+              <tbody id="stTypeBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section class="view hidden" id="view-admin">
+      <div class="card" style="margin-bottom:20px">
+        <h2 class="card-title">Konfigurasi Persentase Simulasi</h2>
+        <div class="config-row">
+          <div>
+            <p class="label">Peluang Menang</p>
+            <div class="big-pct"><span id="winChanceVal">60</span>%</div>
+          </div>
+          <div class="range-wrap">
+            <input type="range" id="winChanceRange" min="0" max="100" step="1" value="60">
+            <div class="range-labels"><span>0%</span><span>50%</span><span>100%</span></div>
+          </div>
+          <button class="btn-ghost" id="saveConfigBtn" type="button">SIMPAN KONFIGURASI</button>
+        </div>
+        <p class="hint" style="margin-top:14px">
+          Peluang kalah otomatis: <b id="loseChanceVal">40</b>% · Pengaturan berlaku untuk seluruh pengguna.
+        </p>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <h2 class="card-title">Daftar Pengguna Demo</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Username</th><th>Peran</th><th>Saldo</th><th>Main</th><th>Atur Saldo</th></tr>
+            </thead>
+            <tbody id="adminUsersBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <h2 class="card-title">Riwayat Seluruh Permainan</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Waktu</th><th>Pengguna</th><th>Jenis</th><th>Pilihan</th>
+                <th>Hasil</th><th>Taruhan</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="adminHistoryBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state hidden" id="adminHistoryEmpty">Belum ada riwayat permainan.</div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <h2 class="card-title">Statistik Global</h2>
+        <div class="grid-4">
+          <div class="stat-card blue"><div class="s-label">Total Putaran</div><div class="s-value" id="agTotal">0</div></div>
+          <div class="stat-card win"><div class="s-label">Menang</div><div class="s-value" id="agWin">0</div></div>
+          <div class="stat-card lose"><div class="s-label">Kalah</div><div class="s-value" id="agLose">0</div></div>
+          <div class="stat-card gold"><div class="s-label">Win Rate</div><div class="s-value" id="agRate">0%</div></div>
+        </div>
+      </div>
+
+      <div class="card danger-zone">
+        <h2 class="card-title">Zona Reset</h2>
+        <p class="hint" style="margin-bottom:16px">Tindakan berikut tidak dapat dibatalkan. Gunakan untuk memulai ulang simulasi.</p>
+        <div class="danger-actions">
+          <button class="btn-danger" id="resetHistoryBtn" type="button">Reset Riwayat & Statistik</button>
+          <button class="btn-danger" id="resetAllBtn" type="button">Reset Semua Data Simulasi</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="mobile-nav" id="mobileNav">
+    <button data-view="play" class="active" type="button">
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span>Simulasi</span>
+    </button>
+    <button data-view="history" type="button">
+      <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 1 0 9 9h-2a7 7 0 1 1-7-7V3zm-1 4v6l5 3 .9-1.6-4-2.4V7h-1.9z"/></svg><span>Riwayat</span>
+    </button>
+    <button data-view="stats" type="button">
+      <svg viewBox="0 0 24 24"><path d="M4 20h3V10H4v10zm6.5 0h3V4h-3v16zM17 20h3v-7h-3v7z"/></svg><span>Statistik</span>
+    </button>
+    <button data-view="admin" class="admin-only hidden" type="button">
+      <svg viewBox="0 0 24 24"><path d="M12 2 4 5.5v6c0 5 3.4 9.3 8 10.5 4.6-1.2 8-5.5 8-10.5v-6L12 2zm0 6a2.2 2.2 0 1 1 0 4.4A2.2 2.2 0 0 1 12 8zm4 9.2c-.9 1.2-2.4 2-4 2s-3.1-.8-4-2c.1-1.4 2.7-2.2 4-2.2s3.9.8 4 2.2z"/></svg><span>Admin</span>
+    </button>
+    <button id="logoutMobile" type="button">
+      <svg viewBox="0 0 24 24"><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5v-2H5V5h5V3zm6.2 3.6-1.4 1.4L17.2 11H9v2h8.2l-2.4 2.4 1.4 1.4L21 12l-4.8-5.4z"/></svg><span>Keluar</span>
+    </button>
+  </nav>
+</div>
+
+<div id="toastWrap"></div>
+
+<script>
+/* ============================================================
+   RASYA TOGEL — App Logic + GSAP/ScrollTrigger + Lenis
+   ============================================================ */
+(function () {
+  'use strict';
+
+  const K = { USERS:'rasya_users', HISTORY:'rasya_history', CONFIG:'rasya_config', SESSION:'rasya_session' };
+  const START_BALANCE = 100000;
+  const MIN_BET = 100;
+  const MULTIPLIER = { 2: 2, 3: 3, 4: 5 };
+  const DEFAULT_CONFIG = { winChance: 60 };
+
+  const $  = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  const readLS = (k, fb) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; } catch(e){ return fb; } };
+  const writeLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} };
+
+  const fmtRp = n => 'Rp ' + Math.round(n || 0).toLocaleString('id-ID');
+  const pad = (n, len) => String(n).padStart(len, '0');
+  const randDigit = () => Math.floor(Math.random() * 10);
+  const uid = () => 'id_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  const fmtTime = iso => {
+    const d = new Date(iso);
+    if (isNaN(d)) return '—';
+    return d.toLocaleString('id-ID', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
+  };
+
+  /* ---------- Toast ---------- */
+  const toastWrap = $('#toastWrap');
+  function toast(msg, type) {
+    const el = document.createElement('div');
+    el.className = 'toast' + (type ? ' ' + type : '');
+    el.textContent = msg;
+    toastWrap.appendChild(el);
+    setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 2600);
+  }
+
+  /* ---------- State ---------- */
+  let USERS = [], HISTORY = [], CONFIG = { ...DEFAULT_CONFIG }, CURRENT_ID = null;
+  let currentView = null;
+
+  function bootStorage() {
+    if (!localStorage.getItem(K.USERS)) writeLS(K.USERS, [
+      { id:'u_admin', username:'admin', password:'admin123', role:'admin', balance:1000000, createdAt:Date.now() },
+      { id:'u_budi',  username:'budi',  password:'demo123',  role:'user',  balance:START_BALANCE, createdAt:Date.now() },
+      { id:'u_sinta', username:'sinta', password:'demo123',  role:'user',  balance:START_BALANCE, createdAt:Date.now() }
+    ]);
+    if (!localStorage.getItem(K.CONFIG))  writeLS(K.CONFIG, DEFAULT_CONFIG);
+    if (!localStorage.getItem(K.HISTORY)) writeLS(K.HISTORY, []);
+  }
+  function reloadState() {
+    USERS   = readLS(K.USERS, []);
+    HISTORY = readLS(K.HISTORY, []);
+    CONFIG  = Object.assign({}, DEFAULT_CONFIG, readLS(K.CONFIG, {}));
+    CURRENT_ID = readLS(K.SESSION, null);
+  }
+  const persistUsers   = () => writeLS(K.USERS, USERS);
+  const persistHistory = () => writeLS(K.HISTORY, HISTORY);
+  const persistConfig  = () => writeLS(K.CONFIG, CONFIG);
+  const currentUser = () => USERS.find(u => u.id === CURRENT_ID) || null;
+
+  /* ============================================================
+     ANIMATION ENGINE — GSAP + ScrollTrigger + Lenis
+     ============================================================ */
+  let lenis = null;
+  const viewTweens = {};
+
+  function initLenis() {
+    if (typeof Lenis === 'undefined' || typeof gsap === 'undefined') return;
+    lenis = new Lenis({
+      duration: 1.15,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      syncTouch: false,
+      touchMultiplier: 1.5
+    });
+    lenis.on('scroll', () => { if (window.ScrollTrigger) ScrollTrigger.update(); });
+    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
+  }
+
+  function splitWords(el) {
+    if (!el || el.dataset.split === '1') return;
+    el.dataset.split = '1';
+    const wrap = document.createElement('span');
+    wrap.className = 'split-wrap';
+    while (el.firstChild) wrap.appendChild(el.firstChild);
+    el.appendChild(wrap);
+
+    const walk = (node) => {
+      Array.from(node.childNodes).forEach(child => {
+        if (child.nodeType === 3) {
+          const txt = child.textContent;
+          if (!txt.trim()) return;
+          const frag = document.createDocumentFragment();
+          txt.split(/(\s+)/).forEach(p => {
+            if (!p.trim()) { frag.appendChild(document.createTextNode(p)); return; }
+            const w = document.createElement('span');
+            w.className = 'word';
+            const inner = document.createElement('span');
+            inner.className = 'word-inner';
+            inner.textContent = p;
+            w.appendChild(inner);
+            frag.appendChild(w);
+          });
+          node.replaceChild(frag, child);
+        } else if (child.nodeType === 1) {
+          walk(child);
+        }
+      });
+    };
+    walk(wrap);
+  }
+
+  function clearViewAnimations(name) {
+    if (!viewTweens[name]) return;
+    viewTweens[name].forEach(t => {
+      if (t.scrollTrigger) t.scrollTrigger.kill();
+      t.kill();
+    });
+    viewTweens[name] = [];
+  }
+
+  function setupViewAnimations(name) {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    const view = document.getElementById('view-' + name);
+    if (!view) return;
+
+    clearViewAnimations(name);
+    viewTweens[name] = [];
+
+    // 1) Split titles
+    view.querySelectorAll('.card-title').forEach(splitWords);
+
+    // 2) Word-by-word reveal
+    view.querySelectorAll('.card-title').forEach(title => {
+      const words = title.querySelectorAll('.word-inner');
+      if (!words.length) return;
+      const tw = gsap.fromTo(words,
+        { yPercent: 110, opacity: 0 },
+        {
+          yPercent: 0, opacity: 1, duration: 0.75, ease: 'power3.out', stagger: 0.055,
+          scrollTrigger: { trigger: title, start: 'top 88%', once: true }
+        }
+      );
+      viewTweens[name].push(tw);
+    });
+
+    // 3) Card entrance
+    view.querySelectorAll('.card, .stat-card').forEach(card => {
+      const tw = gsap.fromTo(card,
+        { y: 34, opacity: 0 },
+        {
+          y: 0, opacity: 1, duration: 0.75, ease: 'power3.out',
+          scrollTrigger: { trigger: card, start: 'top 92%', once: true }
+        }
+      );
+      viewTweens[name].push(tw);
+    });
+
+    // 4) Hero special pulse
+    const hero = view.querySelector('.hero');
+    if (hero) {
+      const tw = gsap.fromTo(hero,
+        { scale: 0.98 },
+        { scale: 1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: hero, start: 'top 95%', once: true } }
+      );
+      viewTweens[name].push(tw);
+    }
+
+    ScrollTrigger.refresh();
+  }
+
+  function setupHovers() {
+    if (typeof gsap === 'undefined') return;
+    const binds = [
+      { sel: '.btn-primary',       hover: { y: -2, scale: 1.02 }, out: { y: 0, scale: 1 }, dur: 0.25 },
+      { sel: '.bet-presets button', hover: { scale: 1.06 },        out: { scale: 1 },        dur: 0.2  },
+      { sel: '.stat-card',         hover: { y: -4 },              out: { y: 0, scale: 1 },  dur: 0.25 },
+      { sel: '.type-btn',          hover: { scale: 1.02 },        out: { scale: 1 },        dur: 0.2  }
+    ];
+    binds.forEach(cfg => {
+      $$(cfg.sel).forEach(el => {
+        if (el.dataset.hoverBound === '1') return;
+        el.dataset.hoverBound = '1';
+        el.addEventListener('mouseenter', () => {
+          gsap.to(el, { ...cfg.hover, duration: cfg.dur, ease: 'power2.out', overwrite: 'auto' });
+        });
+        el.addEventListener('mouseleave', () => {
+          gsap.to(el, { ...cfg.out, duration: cfg.dur + 0.05, ease: 'power2.out', overwrite: 'auto' });
+        });
+      });
+    });
+  }
+
+  function pulseBalance() {
+    if (typeof gsap === 'undefined') return;
+    $$('[data-balance]').forEach(el => {
+      gsap.fromTo(el, { scale: 1 }, {
+        scale: 1.08, duration: 0.18, yoyo: true, repeat: 1, ease: 'power2.out', overwrite: 'auto'
+      });
+    });
+  }
+
+  function animateAuthIn() {
+    if (typeof gsap === 'undefined') return;
+    gsap.from('.auth-card', { y: 40, opacity: 0, scale: 0.97, duration: 0.9, ease: 'power3.out' });
+    gsap.from('.auth-card .field, .auth-card .tabs, .auth-card .brand, .auth-card .auth-sub, .auth-card .auth-note', {
+      y: 20, opacity: 0, duration: 0.6, stagger: 0.06, delay: 0.15, ease: 'power2.out'
+    });
+  }
+
+  /* ============================================================
+     AUTH
+     ============================================================ */
+  const authScreen = $('#authScreen');
+  const mainApp    = $('#mainApp');
+
+  $('#tabLogin').addEventListener('click', () => switchAuthTab('login'));
+  $('#tabRegister').addEventListener('click', () => switchAuthTab('register'));
+
+  function switchAuthTab(which) {
+    const isLogin = which === 'login';
+    $('#tabLogin').classList.toggle('active', isLogin);
+    $('#tabRegister').classList.toggle('active', !isLogin);
+    $('#loginForm').classList.toggle('hidden', !isLogin);
+    $('#registerForm').classList.toggle('hidden', isLogin);
+  }
+
+  $('#loginForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const username = $('#loginUser').value.trim().toLowerCase();
+    const password = $('#loginPass').value;
+    if (!username || !password) return toast('Isi username dan password.', 'error');
+    const user = USERS.find(u => u.username.toLowerCase() === username);
+    if (!user || user.password !== password) return toast('Username atau password salah.', 'error');
+
+    CURRENT_ID = user.id;
+    writeLS(K.SESSION, CURRENT_ID);
+    $('#loginUser').value = '';
+    $('#loginPass').value = '';
+    toast('Selamat datang, ' + user.username + '!', 'success');
+    enterApp();
+  });
+
+  $('#registerForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const username = $('#regUser').value.trim();
+    const pass1 = $('#regPass').value;
+    const pass2 = $('#regPass2').value;
+    if (username.length < 3) return toast('Username minimal 3 karakter.', 'error');
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) return toast('Username hanya huruf, angka, dan _', 'error');
+    if (pass1.length < 4) return toast('Password minimal 4 karakter.', 'error');
+    if (pass1 !== pass2) return toast('Konfirmasi password tidak cocok.', 'error');
+    if (USERS.some(u => u.username.toLowerCase() === username.toLowerCase())) return toast('Username sudah digunakan.', 'error');
+
+    const newUser = { id: uid(), username, password: pass1, role: 'user', balance: START_BALANCE, createdAt: Date.now() };
+    USERS.push(newUser);
+    persistUsers();
+
+    CURRENT_ID = newUser.id;
+    writeLS(K.SESSION, CURRENT_ID);
+    $('#regUser').value = '';
+    $('#regPass').value = '';
+    $('#regPass2').value = '';
+    toast('Akun demo dibuat! Saldo awal ' + fmtRp(START_BALANCE), 'success');
+    enterApp();
+  });
+
+  function logout() {
+    CURRENT_ID = null;
+    writeLS(K.SESSION, null);
+    mainApp.classList.add('hidden');
+    authScreen.classList.remove('hidden');
+    switchAuthTab('login');
+    if (lenis) lenis.scrollTo(0, { immediate: true });
+    else window.scrollTo(0, 0);
+    toast('Kamu telah keluar.', 'success');
+    animateAuthIn();
+  }
+  $('#logoutSide').addEventListener('click', logout);
+  $('#logoutMobile').addEventListener('click', logout);
+
+  /* ============================================================
+     ENTER APP
+     ============================================================ */
+  function enterApp() {
+    const user = currentUser();
+    if (!user) return logout();
+
+    authScreen.classList.add('hidden');
+    mainApp.classList.remove('hidden');
+
+    const isAdmin = user.role === 'admin';
+    $$('.admin-only').forEach(el => el.classList.toggle('hidden', !isAdmin));
+
+    $('#sideAvatar').textContent = user.username.charAt(0).toUpperCase();
+    $('#sideName').textContent = user.username;
+    $('#sideRole').textContent = isAdmin ? 'Administrator' : 'Player Demo';
+
+    resetDrawUI();
+    switchView('play');
+    renderAll();
+    setupHovers();
+  }
+
+  /* ============================================================
+     NAVIGATION
+     ============================================================ */
+  const VIEW_TITLES = {
+    play:    ['Simulasi Angka', 'Dashboard Player'],
+    history: ['Riwayat Simulasi', 'Catatan Permainan'],
+    stats:   ['Statistik', 'Performa Kamu'],
+    admin:   ['Panel Admin', 'Kontrol Simulasi']
+  };
+
+  function switchView(name) {
+    const user = currentUser();
+    if (name === 'admin' && (!user || user.role !== 'admin')) return;
+
+    if (currentView && currentView !== name) clearViewAnimations(currentView);
+    currentView = name;
+
+    $$('.view').forEach(v => v.classList.add('hidden'));
+    const target = $('#view-' + name);
+    if (target) target.classList.remove('hidden');
+
+    $$('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === name));
+    $$('.mobile-nav button[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === name));
+
+    const meta = VIEW_TITLES[name] || ['', ''];
+    const pt = $('#pageTitle');
+    pt.childNodes[0].nodeValue = meta[0];
+    pt.querySelector('small').textContent = meta[1];
+
+    if (name === 'history') renderUserHistory();
+    if (name === 'stats')   renderStats();
+    if (name === 'admin')   renderAdmin();
+    if (name === 'play')    renderBalance();
+
+    // View entrance + animations
+    if (typeof gsap !== 'undefined') {
+      if (target) gsap.fromTo(target, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
+      gsap.fromTo(pt, { opacity: 0, y: -6 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
+    }
+    setupViewAnimations(name);
+
+    if (lenis) lenis.scrollTo(0, { duration: 0.6 });
+    else window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  $$('.nav-item[data-view]').forEach(b => b.addEventListener('click', () => switchView(b.dataset.view)));
+  $$('.mobile-nav button[data-view]').forEach(b => b.addEventListener('click', () => switchView(b.dataset.view)));
+
+  /* ============================================================
+     BALANCE
+     ============================================================ */
+  function renderBalance() {
+    const u = currentUser();
+    const bal = u ? u.balance : 0;
+    $$('[data-balance]').forEach(el => { el.textContent = fmtRp(bal); });
+  }
+
+  /* ============================================================
+     GAME
+     ============================================================ */
+  let selectedLen = 2;
+  let isRolling = false;
+
+  const pickInput   = $('#pickInput');
+  const betInput    = $('#betInput');
+  const playBtn     = $('#playBtn');
+  const digitsEl    = $('#digits');
+  const drawStage   = $('#drawStage');
+  const drawStatus  = $('#drawStatus');
+  const resultBanner= $('#resultBanner');
+  const rbTitle     = $('#rbTitle');
+  const rbDetail    = $('#rbDetail');
+
+  $$('#typeTabs .type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (isRolling) return;
+      $$('#typeTabs .type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedLen = parseInt(btn.dataset.len, 10);
+      pickInput.maxLength = selectedLen;
+      pickInput.value = '';
+      pickInput.placeholder = '0'.repeat(selectedLen);
+      resetDrawUI();
+    });
+  });
+
+  pickInput.addEventListener('input', () => {
+    pickInput.value = pickInput.value.replace(/\D/g, '').slice(0, selectedLen);
+  });
+  pickInput.addEventListener('blur', () => {
+    if (pickInput.value) pickInput.value = pad(pickInput.value, selectedLen);
+  });
+
+  $$('#betPresets button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $$('#betPresets button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      betInput.value = btn.dataset.bet;
+    });
+  });
+  betInput.addEventListener('input', () => {
+    $$('#betPresets button').forEach(b => b.classList.toggle('active', b.dataset.bet === betInput.value));
+  });
+
+  function resetDrawUI() {
+    digitsEl.innerHTML = '';
+    for (let i = 0; i < selectedLen; i++) {
+      const d = document.createElement('div');
+      d.className = 'digit empty';
+      d.textContent = '–';
+      digitsEl.appendChild(d);
+    }
+    drawStage.classList.remove('active');
+    drawStatus.textContent = 'Menunggu taruhan…';
+    resultBanner.className = 'result-banner';
+    rbTitle.textContent = '—';
+    rbDetail.textContent = '—';
+  }
+
+  playBtn.addEventListener('click', handlePlay);
+
+  function handlePlay() {
+    if (isRolling) return;
+    const user = currentUser();
+    if (!user) return logout();
+
+    let raw = pickInput.value.trim();
+    if (raw.length === 0) return toast('Masukkan angka pilihan terlebih dahulu.', 'error');
+    if (raw.length !== selectedLen) { raw = pad(raw, selectedLen); pickInput.value = raw; }
+
+    const bet = Math.floor(Number(betInput.value));
+    if (!bet || bet < MIN_BET) return toast('Nominal taruhan minimal ' + fmtRp(MIN_BET) + '.', 'error');
+    if (bet > user.balance) return toast('Saldo virtual tidak cukup.', 'error');
+
+    user.balance -= bet;
+    persistUsers();
+    renderBalance();
+    pulseBalance();
+
+    isRolling = true;
+    playBtn.disabled = true;
+    resultBanner.className = 'result-banner';
+    drawStage.classList.add('active');
+    drawStatus.textContent = 'Mengundi angka…';
+
+    const winChance = Math.max(0, Math.min(100, Number(CONFIG.winChance) || 0));
+    const isWin = (Math.random() * 100) < winChance;
+    const pickStr = raw;
+
+    let resultStr;
+    if (isWin) resultStr = pickStr;
+    else {
+      let attempts = 0;
+      do { resultStr = Array.from({ length: selectedLen }, randDigit).join(''); attempts++; }
+      while (resultStr === pickStr && attempts < 200);
+      if (resultStr === pickStr) {
+        const last = (parseInt(pickStr.slice(-1), 10) + 1 + Math.floor(Math.random() * 8)) % 10;
+        resultStr = pickStr.slice(0, -1) + last;
+      }
+    }
+
+    const payout = isWin ? Math.round(bet * MULTIPLIER[selectedLen]) : 0;
+
+    digitsEl.innerHTML = '';
+    const cells = [];
+    for (let i = 0; i < selectedLen; i++) {
+      const d = document.createElement('div');
+      d.className = 'digit rolling';
+      d.textContent = randDigit();
+      digitsEl.appendChild(d);
+      cells.push(d);
+    }
+
+    const DURATION = 1900;
+    const startTime = performance.now();
+
+    function tick(now) {
+      const elapsed = now - startTime;
+      cells.forEach(c => { c.textContent = randDigit(); });
+      if (elapsed < DURATION) {
+        const delay = 55 + (elapsed / DURATION) * 110;
+        setTimeout(() => requestAnimationFrame(tick), delay);
+      } else finishRound();
+    }
+
+    function finishRound() {
+      const resultDigits = resultStr.split('');
+      cells.forEach((cell, i) => {
+        setTimeout(() => {
+          cell.classList.remove('rolling');
+          cell.textContent = resultDigits[i];
+          cell.classList.add('settle');
+          cell.classList.add(isWin ? 'win' : 'lose');
+        }, i * 130);
+      });
+
+      setTimeout(() => {
+        drawStage.classList.remove('active');
+        drawStatus.textContent = isWin ? 'Angka cocok!' : 'Angka tidak cocok';
+
+        if (isWin) { user.balance += payout; persistUsers(); renderBalance(); pulseBalance(); }
+
+        resultBanner.className = 'result-banner show ' + (isWin ? 'win' : 'lose');
+        rbTitle.textContent = isWin ? 'MENANG' : 'KALAH';
+        rbDetail.innerHTML = isWin
+          ? 'Pilihan <b>' + pickStr + '</b> · Hasil <b>' + resultStr + '</b> · Payout <b>' + fmtRp(payout) + '</b>'
+          : 'Pilihan <b>' + pickStr + '</b> · Hasil <b>' + resultStr + '</b> · Taruhan <b>' + fmtRp(bet) + '</b> hilang';
+
+        if (typeof gsap !== 'undefined') {
+          gsap.fromTo(resultBanner.querySelector('.rb-title'),
+            { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(2)' });
+        }
+
+        HISTORY.unshift({
+          id: uid(), userId: user.id, username: user.username,
+          type: selectedLen + 'D', pick: pickStr, result: resultStr,
+          bet, payout, status: isWin ? 'MENANG' : 'KALAH',
+          time: new Date().toISOString()
+        });
+        if (HISTORY.length > 500) HISTORY.length = 500;
+        persistHistory();
+
+        isRolling = false;
+        playBtn.disabled = false;
+        renderHeroMeta();
+        toast(isWin ? '🎉 MENANG ' + fmtRp(payout) : 'Kalah — coba lagi!', isWin ? 'success' : 'error');
+      }, cells.length * 130 + 260);
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  /* ============================================================
+     RENDER HELPERS
+     ============================================================ */
+  function renderHeroMeta() {
+    const user = currentUser();
+    if (!user) return;
+    const plays = HISTORY.filter(h => h.userId === user.id);
+    $('#heroPlays').textContent = plays.length + ' putaran dimainkan';
+    $('#winRateChip').textContent = (Number(CONFIG.winChance) || 0) + '%';
+  }
+
+  function renderUserHistory() {
+    const user = currentUser();
+    if (!user) return;
+    const rows = HISTORY.filter(h => h.userId === user.id);
+    const body = $('#userHistoryBody');
+    const empty = $('#userHistoryEmpty');
+    if (!rows.length) { body.innerHTML = ''; empty.classList.remove('hidden'); return; }
+    empty.classList.add('hidden');
+    body.innerHTML = rows.map(h => `
+      <tr>
+        <td class="mono">${fmtTime(h.time)}</td>
+        <td><span class="badge type">${h.type}</span></td>
+        <td class="mono" style="color:var(--gold)">${h.pick}</td>
+        <td class="mono" style="color:var(--neon)">${h.result}</td>
+        <td class="mono">${fmtRp(h.bet)}</td>
+        <td><span class="badge ${h.status === 'MENANG' ? 'win' : 'lose'}">${h.status}</span></td>
+        <td class="mono" style="color:${h.status === 'MENANG' ? 'var(--win)' : 'var(--muted)'}">${fmtRp(h.payout)}</td>
+      </tr>
+    `).join('');
+  }
+
+  function computeStats(list) {
+    const total = list.length;
+    const wins = list.filter(h => h.status === 'MENANG').length;
+    const losses = total - wins;
+    const totalBet = list.reduce((s, h) => s + (h.bet || 0), 0);
+    const totalPayout = list.reduce((s, h) => s + (h.payout || 0), 0);
+    return { total, wins, losses, totalBet, totalPayout, net: totalPayout - totalBet,
+      rate: total ? Math.round((wins / total) * 100) : 0 };
+  }
+
+  function renderStats() {
+    const user = currentUser();
+    if (!user) return;
+    const list = HISTORY.filter(h => h.userId === user.id);
+    const s = computeStats(list);
+    $('#stTotal').textContent = s.total;
+    $('#stWin').textContent = s.wins;
+    $('#stLose').textContent = s.losses;
+    $('#stRate').textContent = s.rate + '%';
+    $('#stBar').style.width = s.rate + '%';
+    $('#stBet').textContent = fmtRp(s.totalBet);
+    $('#stPayout').textContent = fmtRp(s.totalPayout);
+    const netEl = $('#stNet');
+    netEl.textContent = (s.net >= 0 ? '+' : '−') + fmtRp(Math.abs(s.net));
+    netEl.style.color = s.net >= 0 ? 'var(--win)' : 'var(--lose)';
+
+    $('#stTypeBody').innerHTML = ['2D','3D','4D'].map(t => {
+      const sub = list.filter(h => h.type === t);
+      const w = sub.filter(h => h.status === 'MENANG').length;
+      const r = sub.length ? Math.round((w / sub.length) * 100) : 0;
+      return `<tr>
+        <td><span class="badge type">${t}</span></td>
+        <td class="mono">${sub.length}</td>
+        <td class="mono" style="color:var(--win)">${w}</td>
+        <td class="mono">${r}%</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function renderAdmin() {
+    const user = currentUser();
+    if (!user || user.role !== 'admin') return;
+
+    const chance = Math.max(0, Math.min(100, Number(CONFIG.winChance) || 0));
+    $('#winChanceRange').value = chance;
+    $('#winChanceVal').textContent = chance;
+    $('#loseChanceVal').textContent = 100 - chance;
+
+    const playsByUser = {};
+    HISTORY.forEach(h => { playsByUser[h.userId] = (playsByUser[h.userId] || 0) + 1; });
+
+    $('#adminUsersBody').innerHTML = USERS.map(u => `
+      <tr>
+        <td style="font-weight:800;color:#fff">${escapeHtml(u.username)}</td>
+        <td>${u.role === 'admin'
+              ? '<span class="badge admin">ADMIN</span>'
+              : '<span class="badge type">PLAYER</span>'}</td>
+        <td class="mono" style="color:var(--gold)">${fmtRp(u.balance)}</td>
+        <td class="mono">${playsByUser[u.id] || 0}</td>
+        <td>
+          <div class="balance-edit">
+            <input type="number" min="0" step="1000" value="${u.balance}" data-bal-input="${u.id}">
+            <button class="mini-btn" type="button" data-bal-set="${u.id}">SET</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    const body = $('#adminHistoryBody');
+    const empty = $('#adminHistoryEmpty');
+    if (!HISTORY.length) { body.innerHTML = ''; empty.classList.remove('hidden'); }
+    else {
+      empty.classList.add('hidden');
+      body.innerHTML = HISTORY.slice(0, 200).map(h => `
+        <tr>
+          <td class="mono">${fmtTime(h.time)}</td>
+          <td style="font-weight:700;color:#fff">${escapeHtml(h.username)}</td>
+          <td><span class="badge type">${h.type}</span></td>
+          <td class="mono" style="color:var(--gold)">${h.pick}</td>
+          <td class="mono" style="color:var(--neon)">${h.result}</td>
+          <td class="mono">${fmtRp(h.bet)}</td>
+          <td><span class="badge ${h.status === 'MENANG' ? 'win' : 'lose'}">${h.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    const g = computeStats(HISTORY);
+    $('#agTotal').textContent = g.total;
+    $('#agWin').textContent = g.wins;
+    $('#agLose').textContent = g.losses;
+    $('#agRate').textContent = g.rate + '%';
+
+    setupHovers();
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  }
+
+  /* ---------- Admin handlers ---------- */
+  const range = $('#winChanceRange');
+  range.addEventListener('input', () => {
+    const v = parseInt(range.value, 10);
+    $('#winChanceVal').textContent = v;
+    $('#loseChanceVal').textContent = 100 - v;
+  });
+
+  $('#saveConfigBtn').addEventListener('click', () => {
+    const v = Math.max(0, Math.min(100, parseInt(range.value, 10) || 0));
+    CONFIG.winChance = v;
+    persistConfig();
+    renderHeroMeta();
+    toast('Konfigurasi disimpan: Menang ' + v + '% / Kalah ' + (100 - v) + '%', 'success');
+  });
+
+  $('#adminUsersBody').addEventListener('click', e => {
+    const btn = e.target.closest('[data-bal-set]');
+    if (!btn) return;
+    const id = btn.dataset.balSet;
+    const input = document.querySelector('[data-bal-input="' + id + '"]');
+    const u = USERS.find(x => x.id === id);
+    if (!u || !input) return;
+    const val = Math.floor(Number(input.value));
+    if (isNaN(val) || val < 0) return toast('Nominal saldo tidak valid.', 'error');
+    u.balance = val;
+    persistUsers();
+    renderAdmin();
+    renderBalance();
+    toast('Saldo ' + u.username + ' diatur ke ' + fmtRp(val), 'success');
+  });
+
+  $('#resetHistoryBtn').addEventListener('click', () => {
+    if (!confirm('Reset seluruh riwayat & statistik permainan? Saldo pengguna tidak diubah.')) return;
+    HISTORY = [];
+    persistHistory();
+    renderAdmin();
+    renderUserHistory();
+    renderStats();
+    renderHeroMeta();
+    toast('Riwayat & statistik berhasil direset.', 'success');
+  });
+
+  $('#resetAllBtn').addEventListener('click', () => {
+    if (!confirm('Reset SEMUA data simulasi? Riwayat dihapus dan semua saldo dikembalikan ke ' + fmtRp(START_BALANCE) + '.')) return;
+    HISTORY = [];
+    persistHistory();
+    USERS.forEach(u => { if (u.role !== 'admin') u.balance = START_BALANCE; });
+    persistUsers();
+    CONFIG = { ...DEFAULT_CONFIG };
+    persistConfig();
+    resetDrawUI();
+    renderAll();
+    toast('Semua data simulasi telah direset.', 'success');
+  });
+
+  function renderAll() {
+    renderBalance();
+    renderHeroMeta();
+    renderUserHistory();
+    renderStats();
+    renderAdmin();
+  }
+
+  /* ============================================================
+     INIT
+     ============================================================ */
+  function init() {
+    bootStorage();
+    reloadState();
+
+    if (window.gsap && window.ScrollTrigger) {
+      gsap.registerPlugin(ScrollTrigger);
+      initLenis();
+    }
+
+    window.addEventListener('storage', e => {
+      if (!e.key || !e.key.startsWith('rasya_')) return;
+      reloadState();
+      if (currentUser()) renderAll();
+    });
+
+    if (CURRENT_ID && currentUser()) {
+      enterApp();
+    } else {
+      CURRENT_ID = null;
+      authScreen.classList.remove('hidden');
+      mainApp.classList.add('hidden');
+      resetDrawUI();
+      animateAuthIn();
+    }
+
+    renderHeroMeta();
+    setupHovers();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
+</body>
+        </html>
